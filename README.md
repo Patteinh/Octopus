@@ -1,6 +1,6 @@
 # Octopus 🐙
 
-Welcome to `Octopus`.
+Welcome to **Octopus**.
 
 This project focuses on using Ansible, a powerful automation tool, for deploying a complex application across multiple machines without containers.
 
