@@ -1,0 +1,49 @@
+- name: Upload poll service
+  copy:
+    src: files/poll.service
+    dest: /etc/systemd/system/poll.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Python dependencies
+  pip:
+    name: "{{ item }}"
+  loop:
+    - Flask
+    - redis
+
+- name: Configure poll service
+  systemd:
+    name: poll.service
+    enabled: yes
+    state: started
+    environment:
+      - PGUSER={{ postgresql_user }}
+      - PGPASSWORD={{ postgresql_password }}
+      - PGDATABASE={{ postgresql_db }}
+      - PGHOST={{ postgresql_host }}
+      - PGPORT={{ postgresql_port }}
+  notify: restart poll service
+
+- name: Restart poll service
+  systemd:
+    name: poll.service
+    state: restarted
+
+- name: Start poll service
+  systemd:
+    name: poll
+    state: started
+    enabled: yes
+
+- name: Copy poll service archive
+  copy:
+    src: files/poll.tar
+    dest: /opt/poll/poll.tar
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Extract poll service archive
+  command: tar -xf /opt/poll/poll.tar -C /opt/poll/

@@ -1,0 +1,47 @@
+- name: Upload worker service
+  copy:
+    src: files/worker.service
+    dest: /etc/systemd/system/worker.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Java dependencies
+  apt:
+    name: openjdk-11-jdk
+
+- name: Install Maven
+  apt:
+    name: maven
+
+- name: Configure worker service
+  systemd:
+    name: worker.service
+    enabled: yes
+    state: started
+    environment:
+      - PGUSER={{ postgresql_user }}
+      - PGPASSWORD={{ postgresql_password }}
+      - PGDATABASE={{ postgresql_db }}
+      - PGHOST={{ postgresql_host }}
+      - PGPORT={{ postgresql_port }}
+      - REDIS_HOST={{ redis_host }}
+      - REDIS_PORT={{ redis_port }}
+      - REDIS_PASSWORD={{ redis_password }}
+  notify: restart worker service
+
+- name: Restart worker service
+  systemd:
+    name: worker.service
+    state: restarted
+
+- name: Copy worker service archive
+  copy:
+    src: files/worker.tar
+    dest: /opt/worker/worker.tar
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Extract worker service archive
+  command: tar -xf /opt/worker/worker.tar -C /opt/worker/

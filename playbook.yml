@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - role: base
+    - role: redis
+    - role: postgresql
+    - role: poll
+    - role: worker
+    - role: result

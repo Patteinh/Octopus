@@ -1,0 +1,13 @@
+[Unit]
+Description=Worker service
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/worker
+EnvironmentFile=/opt/worker/worker.env
+ExecStart=/usr/bin/python3 /opt/worker/worker.py
+
+[Install]
+WantedBy=multi-user.target

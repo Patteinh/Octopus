@@ -1,0 +1,43 @@
+- name: Upload result service
+  copy:
+    src: files/result.service
+    dest: /etc/systemd/system/result.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Python dependencies
+  pip:
+    name: "{{ item }}"
+  loop:
+    - Flask
+    - redis
+
+- name: Configure result service
+  systemd:
+    name: result.service
+    enabled: yes
+    state: started
+    environment:
+      - PGUSER={{ postgresql_user }}
+      - PGPASSWORD={{ postgresql_password }}
+      - PGDATABASE={{ postgresql_db }}
+      - PGHOST={{ postgresql_host }}
+      - PGPORT={{ postgresql_port }}
+  notify: restart result service
+
+- name: Restart result service
+  systemd:
+    name: result.service
+    state: restarted
+
+- name: Copy result service archive
+  copy:
+    src: files/result.tar
+    dest: /opt/result/result.tar
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Extract result service archive
+  command: tar -xf /opt/result/result.tar -C /opt/result/

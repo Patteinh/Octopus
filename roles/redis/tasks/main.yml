@@ -1,0 +1,17 @@
+- name: Install Redis
+  apt:
+    name: redis-server
+    state: present
+
+- name: Copy Redis config file
+  copy:
+    src: files/redis.conf
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: '0644'
+
+- name: Restart Redis service
+  systemd:
+    name: redis-server
+    state: restarted

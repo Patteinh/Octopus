@@ -1,0 +1,40 @@
+- name: Install PostgreSQL 12 and psql
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - postgresql-12
+    - postgresql-client-12
+
+- name: Create database user
+  postgresql_user:
+    name: "{{ postgresql.user }}"
+    password: "{{ postgresql.password }}"
+    priv: "{{ postgresql.db_name }}.*:ALL"
+    state: present
+
+- name: Create database
+  postgresql_db:
+    name: "{{ postgresql.db_name }}"
+    owner: "{{ postgresql.user }}"
+    state: present
+
+- name: Copy pg_hba.conf file
+  copy:
+    src: files/pg_hba.conf
+    dest: /etc/postgresql/12/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: '0600'
+
+- name: Copy schema.sql file
+  copy:
+    src: files/schema.sql
+    dest: /tmp/schema.sql
+
+- name: Load schema into database
+  become_user: postgres
+  postgresql_db:
+    name: "{{ postgresql.db_name }}"
+    state: import
+    target: /tmp/schema.sql

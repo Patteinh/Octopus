@@ -1,0 +1,36 @@
+redis:
+  port: 6379
+
+postgresql:
+  user: paul
+  password: democracyIsFragile
+  db_name: paul
+
+poll:
+  redis_host: 192.168.0.1
+  redis_port: 6379
+  db_host: 192.168.0.2
+  db_port: 5432
+  db_user: paul
+  db_pass: democracyIsFragile
+  db_name: paul
+  app_host: 192.168.0.3
+  app_port: 5000
+
+worker:
+  redis_host: 192.168.0.1
+  redis_port: 6379
+  db_host: 192.168.0.2
+  db_port: 5432
+  db_user: paul
+  db_pass: democracyIsFragile
+  db_name: paul
+
+result:
+  db_host: 192.168.0.2
+  db_port: 5432
+  db_user: paul
+  db_pass: democracyIsFragile
+  db_name: paul
+  app_host: 192.168.0.4
+  app_port: 5000
